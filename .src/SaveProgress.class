@@ -17,11 +17,12 @@ Public Sub Form_Resize()
 End
 
 Public Sub Form_Open()
-      Me.Top = Settings["Window/SaveProgress/Top", Me.Top]
-      Me.Left = Settings["Window/SaveProgress/Left", Me.Left]
-      Me.Height = Settings["Window/SaveProgress/Height", Me.Height]
-      Me.Width = Settings["Window/SaveProgress/Width", Me.Width]
-  
+
+  Me.Top = Settings["Window/SaveProgress/Top", Me.Top]
+  Me.Left = Settings["Window/SaveProgress/Left", Me.Left]
+  Me.Height = Settings["Window/SaveProgress/Height", Me.Height]
+  Me.Width = Settings["Window/SaveProgress/Width", Me.Width]
+
 
 End
 

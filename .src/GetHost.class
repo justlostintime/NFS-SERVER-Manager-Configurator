@@ -1,16 +1,16 @@
 ' Gambas class file
 
 Public Sub PostMessage(msg As String)
-  
+
   WaitingMessage.text = WaitingMessage.Text & msg
-  
+
 End
 
 
 Public Sub ClearMessage()
-  
+
   WaitingMessage.text = ""
-  
+
 End
 
 
@@ -30,7 +30,7 @@ Public Sub Form_Open()
   Me.Left = Settings["Window/GetHost/Left", Me.Left]
   Me.Height = Settings["Window/GetHost/Height", Me.Height]
   Me.Width = Settings["Window/GetHost/Width", Me.Width]
-  
+
 End
 
 Public Sub Form_Resize()

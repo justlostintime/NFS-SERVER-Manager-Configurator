@@ -3,42 +3,43 @@
 Private Previews As Collection = New Collection
 
 Public Sub RestoreList_DblClick()
-Dim Prev As RestorePreview
-Dim TheFile As String
+
+  Dim Prev As RestorePreview
+  Dim TheFile As String
 
   ' open for preview in window allow multiple to compare
-  
+
   Prev = New RestorePreview
-  
+
   Prev.enabled = True
-  
+
   Prev.title = ("NFS-SERVER CONFIG Preview (") & RestoreList.Current & ")"
   Prev.tag = RestoreList.Current
-  
+
   TheFile = RestoreList.dir & "/" & RestoreList.Current
-  
+
   Prev.PutText(File.Load(TheFile))
-  
+
   Prev.show()
-  
+
   Previews.add(prev, RestoreList.Current)
 
 End
 
 Public Sub PreviewClosing(prev As RestorePreview)
-  
+
   Previews.remove(prev.tag)
-  
+
 End
 
 Public Sub Form_Close()
 
   Dim prev As RestorePreview
-  
+
   For Each prev In Previews
     prev.Close()
   Next
-  
+
   Settings["Window/RestoreBackup/Top"] = Me.Top
   Settings["Window/RestoreBackup/Left"] = Me.Left
   Settings["Window/RestoreBackup/Height"] = Me.Height
@@ -53,12 +54,14 @@ Public Sub Button1_Click()
 End
 
 Public Sub RestoreCommit_Click()
-  Dim nfile, tfile As String 
-  
+
+  Dim nfile, tfile As String
+
   nfile = RestoreList.dir & "/" & RestoreList.current
   tfile = main.NfsExportFile
   main.RestoreExports(nFile, tFile)
   FMain.ReloadData()
+
 End
 
 Public Sub Form_Open()

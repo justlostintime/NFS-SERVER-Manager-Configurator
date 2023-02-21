@@ -1,8 +1,8 @@
 ' Gambas class file
 
-Public TheParms As Variant[] = [ 
-[main.NfsExportFile, "NfsExportFile", False], 
-[main.NfsExportBackups, ("Nfs Export Backup Directory"), False] 
+Public TheParms As Variant[] = [
+  [main.NfsExportFile, "NfsExportFile", False],
+  [main.NfsExportBackups, ("Nfs Export Backup Directory"), False]
 ]
 
 
@@ -14,12 +14,12 @@ Public Sub Form_Open()
   Me.Width = Settings["Window/configuration/Width", Me.Width]
 
 
-   ParmList.Columns.count = 2
-   ParmList.Rows.count = 13
-   ParmList.Columns[0].width = 250
-   ParmList.Columns[1].width = 500
-   ParmList.Columns[0].Background = Color.lightgray
-  
+  ParmList.Columns.count = 2
+  ParmList.Rows.count = 13
+  ParmList.Columns[0].width = 250
+  ParmList.Columns[1].width = 500
+  ParmList.Columns[0].Background = Color.lightgray
+
   ParmList[0, 0].text = ("Nfs Export File Ussually in /etc")
   ParmList[0, 1].Text = main.NfsExportFile
   ParmList[1, 0].text = ("Nfs Export Backup Directory")
@@ -27,7 +27,7 @@ Public Sub Form_Open()
   ParmList[2, 0].text = ("Nfs Export Backups most Current")
   ParmList[2, 1].text = main.NfsExportBackupsCurrent
   ParmList[3, 0].text = ("Nfs Default New Host Parmameters")
-  ParmList[3, 1].text = main.NfsDefaultParms 
+  ParmList[3, 1].text = main.NfsDefaultParms
   ParmList[4, 0].text = ("Nfs Host Search Command")
   ParmList[4, 1].text = main.NfsHostSearchCommand
   ParmList[5, 0].text = ("Nfs Host Search Command Parms")
@@ -49,30 +49,32 @@ Public Sub Form_Open()
   ParmList[12, 1].text = main.NfsEnabledLink
 
 End
+
 Public Sub SaveButton_Click()
 
- main.NfsExportFile = ParmList[0, 1].Text
- main.NfsExportBackupsCurrent = ParmList[2, 1].text
- main.NfsDefaultParms = ParmList[3, 1].text
- main.NfsHostSearchCommand = ParmList[4, 1].text
- main.NfsHostSearchParms = ParmList[5, 1].text
- main.NfsServerRestart = ParmList[6, 1].text
- main.NfsServerStatus = ParmList[7, 1].text
- main.NfsEnableCommand = ParmList[10, 1].text
- main.NfsDisableCommand = ParmList[11, 1].text
- main.NfsEnabledLink = ParmList[12, 1].text
- 
- If ParmList[9, 1].text = "True" Then
-   main.NfsHostScan = True
-   FMain.DoHostScans.Value = True
- Else
-   main.NfsHostScan = False
-   FMain.DoHostScans.Value = False
- Endif
+  main.NfsExportFile = ParmList[0, 1].Text
+  main.NfsExportBackupsCurrent = ParmList[2, 1].text
+  main.NfsDefaultParms = ParmList[3, 1].text
+  main.NfsHostSearchCommand = ParmList[4, 1].text
+  main.NfsHostSearchParms = ParmList[5, 1].text
+  main.NfsServerRestart = ParmList[6, 1].text
+  main.NfsServerStatus = ParmList[7, 1].text
+  main.NfsEnableCommand = ParmList[10, 1].text
+  main.NfsDisableCommand = ParmList[11, 1].text
+  main.NfsEnabledLink = ParmList[12, 1].text
+
+  If ParmList[9, 1].text = "True" Then
+    main.NfsHostScan = True
+    FMain.DoHostScans.Value = True
+  Else
+    main.NfsHostScan = False
+    FMain.DoHostScans.Value = False
+  Endif
 
 End
 
 Public Sub ParmList_Click()
+
   If ParmList.column = 0 Then Return
   If ParmList.row = 9 Then
     ParmList.Edit(["TRUE", "FALSE"], True)
@@ -103,6 +105,7 @@ Public Sub Form_Close()
   Settings["Window/configuration/Left"] = Me.Left
   Settings["Window/configuration/Height"] = Me.Height
   Settings["Window/configuration/Width"] = Me.Width
+
 End
 
 Public Sub Form_Resize()
@@ -113,4 +116,5 @@ Public Sub Form_Resize()
   CloseButton.x = Me.width - CloseButton.width - 10
   SaveButton.y = closebutton.Y
   SaveButton.x = closebutton.x - savebutton.width - 10
+
 End

@@ -15,44 +15,44 @@ Public NfsEnabledLink As String = "/etc/systemd/system/multi-user.target.wants/n
 Public NfsHostScan As Boolean = False
 
 Public Sub LoadConfig()
-  
-NfsDefaultParms = Settings["NfsDefaultParms", "rw,all_squash,sync,no_subtree_check"]
-NfsExportFile = Settings["NfsExportFile", "/etc/exports.test"]
-NfsServerRestart = Settings["NfsServerRestart", "systemctl restart nfs-server"]
-NfsServerStatus = Settings["NfsServerStatus", "systemctl status nfs-server"]
-NfsServerStop = Settings["NfsServerStop", "systemctl stop nfs-server"]
-NfsHostSearchCommand = Settings["NfsHostSearchCommand", "/usr/bin/fping"]
-NfsHostSearchParms = Settings["NfsHostSearchParms", "-q -a -g"]
-NfsExportBackups = Settings["NfsExportBackups", "/etc/.oldexports"]
-NfsExportBackupsCurrent = Settings["NfsExportBackupsCurrent", "/etc/exports.old"]
-NfsHostScan = Settings["NfsHostScan", False]
-NfsEnableCommand = Settings["NfsEnableCommand", "systemctl enable nfs-service"]
-NfsDisableCommand = Settings["NfsDisableCommand", "systemctl disable nfs-service"]
-NfsEnabledLink = Settings["NfsEnabledLink", "/etc/systemd/system/multi-user.target.wants/nfs-server.service"]
-If Exist(NfsEnabledLink) Then
-  FMain.EnableServiceCheck.value = True
-Else
-  FMain.EnableServiceCheck.value = False
-Endif
-FMain.DoHostScans.Value = NfsHostScan
+
+  NfsDefaultParms = Settings["NfsDefaultParms", "rw,all_squash,sync,no_subtree_check"]
+  NfsExportFile = Settings["NfsExportFile", "/etc/exports.test"]
+  NfsServerRestart = Settings["NfsServerRestart", "systemctl restart nfs-server"]
+  NfsServerStatus = Settings["NfsServerStatus", "systemctl status nfs-server"]
+  NfsServerStop = Settings["NfsServerStop", "systemctl stop nfs-server"]
+  NfsHostSearchCommand = Settings["NfsHostSearchCommand", "/usr/bin/fping"]
+  NfsHostSearchParms = Settings["NfsHostSearchParms", "-q -a -g"]
+  NfsExportBackups = Settings["NfsExportBackups", "/etc/.oldexports"]
+  NfsExportBackupsCurrent = Settings["NfsExportBackupsCurrent", "/etc/exports.old"]
+  NfsHostScan = Settings["NfsHostScan", False]
+  NfsEnableCommand = Settings["NfsEnableCommand", "systemctl enable nfs-service"]
+  NfsDisableCommand = Settings["NfsDisableCommand", "systemctl disable nfs-service"]
+  NfsEnabledLink = Settings["NfsEnabledLink", "/etc/systemd/system/multi-user.target.wants/nfs-server.service"]
+  If Exist(NfsEnabledLink) Then
+    FMain.EnableServiceCheck.value = True
+  Else
+    FMain.EnableServiceCheck.value = False
+  Endif
+  FMain.DoHostScans.Value = NfsHostScan
 
 End
 
 Public Sub SaveConfig()
 
-Settings["NfsDefaultParms"] = NfsDefaultParms
-Settings["NfsExportFile"] = NfsExportFile
-Settings["NfsServerRestart"] = NfsServerRestart
-Settings["NfsServerStatus"] = NfsServerStatus
-Settings["NfsServerStop"] = NfsServerStop
-Settings["NfsHostSearchCommand"] = NfsHostSearchCommand
-Settings["NfsHostSearchParms"] = NfsHostSearchParms
-Settings["NfsExportBackups"] = NfsExportBackups
-Settings["NfsExportBackupsCurrent"] = NfsExportBackupsCurrent
-Settings["NfsHostScan"] = NfsHostScan
-Settings["NfsEnableCommand"] = NfsEnableCommand
-Settings["NfsDisableCommand"] = NfsDisableCommand
-Settings["NfsEnabledLink"] = NfsEnabledLink
+  Settings["NfsDefaultParms"] = NfsDefaultParms
+  Settings["NfsExportFile"] = NfsExportFile
+  Settings["NfsServerRestart"] = NfsServerRestart
+  Settings["NfsServerStatus"] = NfsServerStatus
+  Settings["NfsServerStop"] = NfsServerStop
+  Settings["NfsHostSearchCommand"] = NfsHostSearchCommand
+  Settings["NfsHostSearchParms"] = NfsHostSearchParms
+  Settings["NfsExportBackups"] = NfsExportBackups
+  Settings["NfsExportBackupsCurrent"] = NfsExportBackupsCurrent
+  Settings["NfsHostScan"] = NfsHostScan
+  Settings["NfsEnableCommand"] = NfsEnableCommand
+  Settings["NfsDisableCommand"] = NfsDisableCommand
+  Settings["NfsEnabledLink"] = NfsEnabledLink
 
 End
 
@@ -60,44 +60,44 @@ End
 
 
 Public Sub main()
-  
-   Dim cmd, commands, parms As String
-   Dim plist, TheArgs As String[]
+
+  Dim cmd, commands, parms As String
+  Dim plist, TheArgs As String[]
 
   args.Begin(" This is not for standard Use")
-  
+
   plist = Args.all
-  
+
   cmd = Args.Get("c", "command")
-  
+
   Select Case cmd
-      
+
     Case "RUN"
       Print "Begin loading"
-      
+
       Env["NFSSAVE"] = "FREE"
-      
+
       FMain.Show()
-      
-      Return 
-      
+
+      Return
+
   End Select
-  
+
   Args.End()
-  
+
   Select Case Env["NFSSAVE"]
     Case "TRUE"
-      
+
       Env["NFSSAVE"] = "FREE"
 
       GetPassword.ShowModal()
-     
+
       Quit 0
-      
+
     Case Else
-      
+
       Print ("Begin superuser call loading")
-      
+
       Env["NFSSAVE"] = "TRUE"
       TheArgs = Args.All
       Env["SUDO_ASKPASS"] = TheArgs[0] ' get the name of this executable
@@ -107,153 +107,158 @@ Public Sub main()
       Shell commands To Parms
       Print "From sudo >" & Parms & " , Done\n"
       Env["NFSSAVE"] = "FREE"
-      
+
   End Select
-  
+
   Quit 0
-  
+
 End
 
 Public Sub SaveExports(nFile As String)
-Dim tfile As String
-Dim cmdresult As String
 
-   SaveProgress.title = ("Saving Exports and creating backup")
-   SaveProgress.Show()
-   
-   Wait
-   ' Message.Info("We are running as root! Writing NFS /etc/exports\n Press ok to begin " & nFile)
-   SaveProgress.SaveMsg.text &= ("We are running as root! Writing NFS ") & NfsExportFile & " \n Source " & nFile & "\n"
-   
-   If Not Exist(NfsExportBackups) Then
-      Mkdir NfsExportBackups
-      SaveProgress.SaveMsg.text &= ("Created backup directory ") & NfsExportBackups & "\n"
-   Endif
-     
-   tfile = NfsExportBackups & "/exports" & Str(Rnd) & Str(Timer)
-   SaveProgress.SaveMsg.text &= ("Copying file from ") & NfsExportFile & " to " & tfile & "\n"
-   
-   Try Copy NfsExportFile To tfile
-   SaveProgress.SaveMsg.text &= ("Copied file from ") & NfsExportFile & " to " & tfile & "\n"
-   
-   If Exist(NfsExportBackups & "/exports.last") Then 
-      Try Kill NfsExportBackups & "/exports.last"
-      SaveProgress.SaveMsg.text &= ("Removed stale ") & NfsExportBackups & "/exports.old" & "\n"
-   Endif
-   
-   Try Move NfsExportFile To NfsExportBackups & "/exports.last"
-   SaveProgress.SaveMsg.text &= ("Moved ") & NfsExportFile & " to " & NfsExportBackupsCurrent & "\n"
-   
-   If Not Exist(NfsExportBackupsCurrent) Then
-      Link NfsExportBackups & "/exports.last" To NfsExportBackupsCurrent
-   Endif
-   
-   Try Copy nFile To NfsExportFile
-   SaveProgress.SaveMsg.text &= ("Copies ") & nfile & " to " & NfsExportFile & "\n"
-   
-   Try Kill nFile
-   SaveProgress.SaveMsg.text &= ("Removed Temp file ") & nFile & "\n"
-   
-   Shell NfsServerRestart To cmdresult
-   SaveProgress.SaveMsg.text &= ("Restarted NFS-SERVER result (") & cmdresult & ")\n"
-    
-   Shell NfsServerStatus To cmdresult
-   SaveProgress.SaveMsg.text &= ("Restarted NFS-SERVER Status\n") & cmdresult & "\n"
-   SaveProgress.SaveMsg.text &= ("Restore Complete ! Press OK to continue\n")
-   main.waitsaveclose()
-   
-   Catch 
-     
-     Message.Info(("ooops something went very wrong! -->") & Error.text & "Line:" & Error.Where)
-     
-     If Not Exist(NfsExportFile) Then
-       If Exist(NfsExportBackupsCurrent) Then
-         Move NfsExportBackupsCurrent To NfsExportFile
-       Endif
-     Endif
+  Dim tfile As String
+  Dim cmdresult As String
+
+  SaveProgress.title = ("Saving Exports and creating backup")
+  SaveProgress.Show()
+
+  Wait
+  ' Message.Info("We are running as root! Writing NFS /etc/exports\n Press ok to begin " & nFile)
+  SaveProgress.SaveMsg.text &= ("We are running as root! Writing NFS ") & NfsExportFile & " \n Source " & nFile & "\n"
+
+  If Not Exist(NfsExportBackups) Then
+    Mkdir NfsExportBackups
+    SaveProgress.SaveMsg.text &= ("Created backup directory ") & NfsExportBackups & "\n"
+  Endif
+
+  tfile = NfsExportBackups & "/exports" & Str(Rnd) & Str(Timer)
+  SaveProgress.SaveMsg.text &= ("Copying file from ") & NfsExportFile & " to " & tfile & "\n"
+
+  Try Copy NfsExportFile To tfile
+  SaveProgress.SaveMsg.text &= ("Copied file from ") & NfsExportFile & " to " & tfile & "\n"
+
+  If Exist(NfsExportBackups & "/exports.last") Then
+    Try Kill NfsExportBackups & "/exports.last"
+    SaveProgress.SaveMsg.text &= ("Removed stale ") & NfsExportBackups & "/exports.old" & "\n"
+  Endif
+
+  Try Move NfsExportFile To NfsExportBackups & "/exports.last"
+  SaveProgress.SaveMsg.text &= ("Moved ") & NfsExportFile & " to " & NfsExportBackupsCurrent & "\n"
+
+  If Not Exist(NfsExportBackupsCurrent) Then
+    Link NfsExportBackups & "/exports.last" To NfsExportBackupsCurrent
+  Endif
+
+  Try Copy nFile To NfsExportFile
+  SaveProgress.SaveMsg.text &= ("Copies ") & nfile & " to " & NfsExportFile & "\n"
+
+  Try Kill nFile
+  SaveProgress.SaveMsg.text &= ("Removed Temp file ") & nFile & "\n"
+
+  Shell NfsServerRestart To cmdresult
+  SaveProgress.SaveMsg.text &= ("Restarted NFS-SERVER result (") & cmdresult & ")\n"
+
+  Shell NfsServerStatus To cmdresult
+  SaveProgress.SaveMsg.text &= ("Restarted NFS-SERVER Status\n") & cmdresult & "\n"
+  SaveProgress.SaveMsg.text &= ("Restore Complete ! Press OK to continue\n")
+  main.waitsaveclose()
+
+Catch
+
+  Message.Info(("ooops something went very wrong! -->") & Error.text & "Line:" & Error.Where)
+
+  If Not Exist(NfsExportFile) Then
+    If Exist(NfsExportBackupsCurrent) Then
+      Move NfsExportBackupsCurrent To NfsExportFile
+    Endif
+  Endif
+
 End
 
 Public Sub RestoreExports(nFile As String, tfile As String)
-Dim cmdresult As String
-   SaveProgress.title = ("Restoring Exports from backups")
-   SaveProgress.Show()
-   
-   Wait
-   
-   SaveProgress.SaveMsg.text &= ("We are running as root! Restoring NFS ") & nFile & " to " & tFile & "\n"
-   
-   If Not Exist(nFile) Then
-      SaveProgress.SaveMsg.text &= ("The requested file was not found to restore\n")
-      Return
-   Endif
-     
-   Try Kill tfile
-   SaveProgress.SaveMsg.text &= ("Deleted the old ") & tfile & "\n"
-   
-   Try Copy nfile To tfile
-   SaveProgress.SaveMsg.text &= ("Copied file from ") & nfile & " to " & tfile & "\n"
-   
-   
-   Shell NfsServerRestart To cmdresult
-   SaveProgress.SaveMsg.text &= ("Restarted NFS-SERVER result (") & cmdresult & ")\n"
-    
-   Shell NfsServerStatus To cmdresult
-   SaveProgress.SaveMsg.text &= ("Restarted NFS-SERVER Status\n") & cmdresult & "\n"
-   SaveProgress.SaveMsg.text &= ("Restore Complete ! Press OK to continue\n")
-   
-   main.waitsaveclose()
-   
-   Catch 
-     
-     Message.Info(("ooops something went very wrong! -->") & Error.text & "Line:" & Error.Where)
-     
+
+  Dim cmdresult As String
+
+  SaveProgress.title = ("Restoring Exports from backups")
+  SaveProgress.Show()
+
+  Wait
+
+  SaveProgress.SaveMsg.text &= ("We are running as root! Restoring NFS ") & nFile & " to " & tFile & "\n"
+
+  If Not Exist(nFile) Then
+    SaveProgress.SaveMsg.text &= ("The requested file was not found to restore\n")
+    Return
+  Endif
+
+  Try Kill tfile
+  SaveProgress.SaveMsg.text &= ("Deleted the old ") & tfile & "\n"
+
+  Try Copy nfile To tfile
+  SaveProgress.SaveMsg.text &= ("Copied file from ") & nfile & " to " & tfile & "\n"
+
+
+  Shell NfsServerRestart To cmdresult
+  SaveProgress.SaveMsg.text &= ("Restarted NFS-SERVER result (") & cmdresult & ")\n"
+
+  Shell NfsServerStatus To cmdresult
+  SaveProgress.SaveMsg.text &= ("Restarted NFS-SERVER Status\n") & cmdresult & "\n"
+  SaveProgress.SaveMsg.text &= ("Restore Complete ! Press OK to continue\n")
+
+  main.waitsaveclose()
+
+Catch
+
+  Message.Info(("ooops something went very wrong! -->") & Error.text & "Line:" & Error.Where)
+
 End
 
 Public Sub isServerRunning() As Boolean
+
   Dim results, datat, datas As String
   Dim lines, datal As String[]
-  
+
   Shell NfsServerStatus To results
   lines = Split(results, "\n", "", True)
-  
+
   For Each datat In lines
-    
+
     datas = Trim(datat)
     datal = Split(datas, " :", "", True)
-    
+
     If datal[0] = "Active" Then
-       Select Case datal[1]
-         Case "inactive"
-           Return False
-         Case "active"
-           Return True
-       End Select
+      Select Case datal[1]
+        Case "inactive"
+          Return False
+        Case "active"
+          Return True
+      End Select
     Endif
   Next
-  
+
   Return False
-  
+
 End
 
 Public Sub waitgethostclose()
-  
-  While Not gethost.closed 
+
+  While Not gethost.closed
     Wait 500
   Wend
-  
+
 End
 
 Public Sub waitsaveclose()
-  
-  While Not SaveProgress.closed 
+
+  While Not SaveProgress.closed
     Wait 500
   Wend
-  
+
 End
 
 Public Sub isSericeEnabled() As Boolean
-  
-  Return Exist(NfsEnabledLink) 
-  
+
+  Return Exist(NfsEnabledLink)
+
 End
 

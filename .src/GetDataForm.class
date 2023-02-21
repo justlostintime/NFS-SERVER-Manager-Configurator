@@ -11,9 +11,9 @@ Public Sub btnOK_Click()
 End
 
 Public Sub Value() As String
-  
+
   Return TheValue
-  
+
 End
 
 
@@ -29,7 +29,7 @@ Public Sub Form_Close()
 
   TheValue = DataInput.text
   Me.Close(False)
-  
+
   Settings["Window/GetDataForm/Top"] = Me.Top
   Settings["Window/GetDataForm/Left"] = Me.Left
   Settings["Window/GetDataForm/Height"] = Me.Height
@@ -43,6 +43,6 @@ Public Sub Form_Open()
   Me.Left = Settings["Window/GetDataForm/Left", Me.Left]
   Me.Height = Settings["Window/GetDataForm/Height", Me.Height]
   Me.Width = Settings["Window/GetDataForm/Width", Me.Width]
-  
+
 
 End
