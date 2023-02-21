@@ -1,0 +1,42 @@
+' Gambas class file
+
+Public Sub PutText(TheText As String)
+  
+  PreviewArea.text = TheText
+  
+End
+
+Public Sub Button1_Click()
+ 
+  Me.Close()
+  
+End
+
+Public Sub Form_Resize()
+
+  PreviewArea.Width = Me.width - 20
+  PreviewArea.Height = Me.height - Button1.height - 40
+  Button1.x = Me.width - Button1.width - 20
+  Button1.y = Me.height - Button1.height - 10
+  
+End
+
+Public Sub Form_Close()
+
+ RestoreBackup.PreviewClosing(Me)
+ 
+  Settings["Window/RestorePreview/Top"] = Me.Top
+  Settings["Window/RestorePreview/Left"] = Me.Left
+  Settings["Window/RestorePreview/Height"] = Me.Height
+  Settings["Window/RestorePreview/Width"] = Me.Width
+End
+
+Public Sub Form_Open()
+
+  Me.Top = Settings["Window/RestorePreview/Top", Me.Top]
+  Me.Left = Settings["Window/RestorePreview/Left", Me.Left]
+  Me.Height = Settings["Window/RestorePreview/Height", Me.Height]
+  Me.Width = Settings["Window/RestorePreview/Width", Me.Width]
+
+
+End

@@ -1,0 +1,14 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,90,55)
+  Text = ("Saving new Exports file Info")
+  { !savemsg TextArea
+    MoveScaled(1,0,88,49)
+    #Public = True
+  }
+  { Button1 Button
+    MoveScaled(76,50,13,4)
+    Text = ("OK")
+  }
+}

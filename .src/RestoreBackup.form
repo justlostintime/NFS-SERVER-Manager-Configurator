@@ -1,0 +1,21 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,102,64)
+  Text = ("NFS_SERVER CONFIG RESTORE")
+  Resizable = False
+  { !RestoreList FileView
+    MoveScaled(6,4,89,49)
+    #Public = True
+    Dir = "/etc/.oldexports"
+    ShowDetailed = True
+  }
+  { Button1 Button
+    MoveScaled(82,57,13,4)
+    Text = ("Quit")
+  }
+  { RestoreCommit Button
+    MoveScaled(64,57,17,4)
+    Text = ("Restore/Commit")
+  }
+}

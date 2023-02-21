@@ -1,0 +1,41 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,64,68)
+  Text = ("Add A New Host To A Shared Directory")
+  { HostPrompt ComboBox
+    MoveScaled(1,6,61,4)
+    List = [("*"), ("localhost"), ("gss/Krb5i")]
+    Text = ("*")
+  }
+  { TextLabel1 TextLabel
+    MoveScaled(1,2,57,3)
+    Text = ("Enter Host Name or select from list below. Default '*' any host")
+  }
+  { AddParm Button
+    MoveScaled(27,27,9,3)
+    Text = ("Add")
+  }
+  { RemoveParm Button
+    MoveScaled(27,32,9,3)
+    Text = ("Remove")
+  }
+  { SaveButton Button
+    MoveScaled(39,63,10,3)
+    Text = ("Save")
+  }
+  { CancelButton Button
+    MoveScaled(52,63,10,3)
+    Text = ("Cancel")
+  }
+  { SetParms ListBox
+    MoveScaled(37,12,25,50)
+  }
+  { SelectParms ListBox
+    MoveScaled(2,12,24,50)
+  }
+  { Button3 Button
+    MoveScaled(2,63,24,3)
+    Text = ("Help For Selected Parm")
+  }
+}

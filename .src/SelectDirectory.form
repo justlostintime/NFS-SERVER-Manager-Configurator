@@ -1,0 +1,17 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,100,70)
+  { !DirChooser1 DirChooser
+    MoveScaled(1,2,96,62)
+    #Public = True
+  }
+  { Button1 Button
+    MoveScaled(73,65,11,4)
+    Text = ("ok")
+  }
+  { Button2 Button
+    MoveScaled(85,65,10,4)
+    Text = ("Cancel")
+  }
+}

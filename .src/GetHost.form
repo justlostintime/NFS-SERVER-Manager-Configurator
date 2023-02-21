@@ -1,0 +1,12 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,57,20)
+  Text = ("Please Wait Searching for Local Hosts")
+  AutoResize = True
+  { WaitingMessage TextArea
+    MoveScaled(1,1,55,18)
+    Expand = True
+    Text = ("Searching for local hosts that are online")
+  }
+}

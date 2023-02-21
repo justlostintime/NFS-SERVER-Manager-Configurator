@@ -1,0 +1,148 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,156,98)
+  Text = ("NFS Server Configuration")
+  { ServerManager TabPanel
+    MoveScaled(0,1,155,96)
+    Count = 2
+    Index = 0
+    Text = ("NFS Server")
+    { AddDirectory Button
+      MoveScaled(7,35,16,3)
+      ToolTip = ("Use this control to select and add a directory to be shared from this NFS server. A set of default Host access permissions as defined in the APP config are assigned for the most used  defaults and should be  adequate for most cases.\n\nDont forget to Check the local ACL(ACCESS CONTROL LIST) for the shared directories\n '*' defines all hosts.")
+      Text = ("Add Directory")
+    }
+    { EditDirectory Button
+      MoveScaled(25,35,9,3)
+      Text = ("Edit")
+    }
+    { DeleteDirectory Button
+      MoveScaled(35,35,11,3)
+      Text = ("Delete")
+    }
+    { AddHostButton Button
+      MoveScaled(7,66,16,4)
+      ToolTip = ("Unlike Windows shares NFS(Network File System) shares are mainly configured on a Per client computer. Access and restrictions are set via ACL on both the client and Server hosts. This control allows you to select which clients may acces the currently selected Shared directory. The ACL set on the shared directory manages what may be done by the connected host.\nACL = ACCESS CONTROL LIST\nSee this link for more information:\nhttps://www.geeksforgeeks.org/access-control-listsacl-linux/\n\n\n ")
+      Text = ("Add Host")
+    }
+    { EditHost Button
+      MoveScaled(25,66,10,4)
+      Text = ("Edit")
+    }
+    { DeleteHost Button
+      MoveScaled(36,66,10,4)
+      Text = ("Delete")
+    }
+    { CheckBox1 CheckBox
+      MoveScaled(7,72,20,6)
+      Text = ("Enable NFSv4")
+    }
+    { TextBox1 TextBox
+      MoveScaled(29,72,23,5)
+      Background = Color.Background
+      Text = ("domain")
+    }
+    { CommitButton Button
+      MoveScaled(86,74,15,4)
+      ToolTip = ("This will Save the EXPORTS config and commit the changes to NFS SERVER by restarting the NFS SERVER")
+      Text = ("Save/Commit")
+    }
+    { Undelete Button
+      MoveScaled(48,35,11,3)
+      Text = ("UnDelete")
+    }
+    { QuitButton Button
+      MoveScaled(103,74,10,4)
+      Text = ("Quit")
+    }
+    { RestoreButton Button
+      MoveScaled(86,70,27,4)
+      ToolTip = ("This Will allow the restoration of older copies of the EXPORTS file")
+      Text = ("Restore From Backups")
+    }
+    { ConfigureButton Button
+      MoveScaled(86,66,27,4)
+      ToolTip = ("This allows you to configure the this application default values and functions.")
+      Text = ("App Config")
+    }
+    { !DoHostScans CheckBox
+      MoveScaled(117,73,27,5)
+      #Public = True
+      ToolTip = ("When Scan for active hosts is selected, the system with look for active client computers for the NFS share to allow the user to select a host for directories.")
+      Text = ("Scan For Active Hosts")
+    }
+    { Panel1 Panel
+      MoveScaled(54,66,30,12)
+      Background = Color.TooltipBackground
+      { Label1 Label
+        MoveScaled(1,1,7,2)
+        Text = ("Server")
+      }
+      { ServStop Button
+        MoveScaled(18,2,11,3)
+        ToolTip = ("This button will stop the NFS service and close all shares. Any host access thos shares will loose connection and possibly data. It would be best to check the status and see who is connect to the shares before stopping the service.")
+        Text = ("Stop")
+      }
+      { ServRestart Button
+        MoveScaled(18,5,11,3)
+        ToolTip = ("The control will start the service if it is stopped. It will stop and restart the service if it is already running. It is best to check the status to see the  connected clients before using this control if the serice is cuurently up and running. ")
+        Text = ("Restart")
+      }
+      { ServStatus Button
+        MoveScaled(18,8,11,3)
+        ToolTip = ("This control displays the status of the NFS service and the list of connected clients, curently shared directories and the configured shered directories.")
+        Text = ("Status")
+      }
+      { ServerRunning RadioButton
+        MoveScaled(1,3,15,5)
+        Foreground = Color.DarkGreen
+        ToolTip = ("This control displays the Status of the Running Service. It can also be used to start a stopped NFS service.")
+        Text = ("Running")
+        Value = True
+      }
+      { ServerStopped RadioButton
+        MoveScaled(1,8,14,4)
+        Foreground = Color.Red
+        ToolTip = ("This control displays the status of a stopped NFS service and also may be used to stop a running NFS service.")
+        Text = ("Stopped")
+      }
+      { TheLight Button
+        MoveScaled(9,1,2,2)
+        Visible = False
+        Enabled = False
+        Background = Color.Red
+        Foreground = Color.Red
+        Text = (" ")
+      }
+    }
+    { !Timer1 #Timer
+      #MoveScaled(78,33)
+      #Public = True
+      Enabled = True
+      Delay = 2000
+    }
+    { !EnableServiceCheck CheckBox
+      MoveScaled(117,67,26,5)
+      #Public = True
+      ToolTip = ("When the NFS service is enabled it will start at system boot and make shares available on the network. If this is not enabled then you may start and stop the service only manually.")
+      Text = ("Enable NFS Service")
+    }
+    { HostView TableView
+      MoveScaled(5,40,139,25)
+      ShowCursor = True
+      ScrollBar = Scroll.Vertical
+      Sorted = True
+    }
+    { DirectoryView TableView
+      MoveScaled(5,2,139,31)
+      Mode = Select.Single
+      ShowCursor = True
+      ScrollBar = Scroll.Vertical
+      Sorted = True
+    }
+    Index = 1
+    Text = ("NFS Client")
+    Index = 0
+  }
+}

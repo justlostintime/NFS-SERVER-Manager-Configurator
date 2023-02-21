@@ -1,0 +1,395 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: NFS-SERVER-Manager-Configurator 3.15.90\n"
+"PO-Revision-Date: 2020-08-30 00:21 UTC\n"
+"Last-Translator: brian <brian@GN41>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: .project:1
+msgid "NFS SERVER Manager/Configurator"
+msgstr ""
+
+#: .project:2
+msgid "This App helps manage the NFS server shares and access rights\nThis uses sudo to gain root privilage. So users should be sudoer for the system they use it on. The default configuration points to \"/etc/exports.test\" so should be changed to just \"/etc/exports\"(After you change this remeber to press enter) in the configuration before going live. \n\nThis was tested on opensuse 15.1, Linux mint 19.2 and Raspbian Buster Pi 4 so far.\nThis requires that fping, showmount, netstat and nfs-server be installed.\nPlease send problem reports to brian@westwoodsvcs.com\n\nIf your debugging from gambas ide then gambas3 must be started with sudo, and the -c run option should be chosen from the debut parameter menu"
+msgstr ""
+
+#: AddHost.form:16
+msgid "Add A New Host To A Shared Directory"
+msgstr ""
+
+#: AddHost.form:20
+msgid "*"
+msgstr "*"
+
+#: AddHost.form:20
+msgid "localhost"
+msgstr ""
+
+#: AddHost.form:20
+msgid "gss/Krb5i"
+msgstr ""
+
+#: AddHost.form:26
+msgid "Enter Host Name or select from list below. Default '*' any host"
+msgstr ""
+
+#: AddHost.form:31
+msgid "Add"
+msgstr ""
+
+#: AddHost.form:36
+msgid "Remove"
+msgstr ""
+
+#: AddHost.form:41 Configuration.form:14
+msgid "Save"
+msgstr ""
+
+#: AddHost.form:46 GetDataForm.form:43 SelectDirectory.form:22
+msgid "Cancel"
+msgstr ""
+
+#: AddHost.form:59
+msgid "Help For Selected Parm"
+msgstr ""
+
+#: AddHost.class:165
+msgid "Looking for active hosts network("
+msgstr ""
+
+#: AddHost.class:165
+msgid ")\n Please be patient\n"
+msgstr ""
+
+#: AddHost.class:169
+msgid "Attempting to resolve IP address to Host Name\n Host name are better to use as \nthey support dhcp Addresses for devices\n"
+msgstr ""
+
+#: AddHost.class:182
+msgid "This app requires the "
+msgstr ""
+
+#: AddHost.class:182
+msgid " command to be installed\n in order to identify active hosts.\n Please install it for this functionality to work\n Bypassed for now"
+msgstr ""
+
+#: AddHost.class:185
+msgid "Done!"
+msgstr ""
+
+#: AddHost.class:235
+msgid "Parameter data needed for "
+msgstr ""
+
+#: Configuration.class:6
+msgid "Nfs Export Backup Directory"
+msgstr ""
+
+#: Configuration.form:10
+msgid "NFS-SERVER APPLICATION CONFIGURATOR"
+msgstr ""
+
+#: Configuration.form:19 RestorePreview.form:20
+msgid "Close"
+msgstr ""
+
+#: Configuration.class:23
+msgid "Nfs Export File Ussually in /etc"
+msgstr ""
+
+#: Configuration.class:27
+msgid "Nfs Export Backups most Current"
+msgstr ""
+
+#: Configuration.class:29
+msgid "Nfs Default New Host Parmameters"
+msgstr ""
+
+#: Configuration.class:31
+msgid "Nfs Host Search Command"
+msgstr ""
+
+#: Configuration.class:33
+msgid "Nfs Host Search Command Parms"
+msgstr ""
+
+#: Configuration.class:35
+msgid "Nfs Server Restart Cmd"
+msgstr ""
+
+#: Configuration.class:37
+msgid "Nfs Server Status cmd"
+msgstr ""
+
+#: Configuration.class:39
+msgid "NfsServerStop"
+msgstr ""
+
+#: Configuration.class:41
+msgid "Nfs Do Host Scan"
+msgstr ""
+
+#: Configuration.class:44
+msgid "Nfs Server Enable cmd"
+msgstr ""
+
+#: Configuration.class:46
+msgid "Nfs Server Disable cmd"
+msgstr ""
+
+#: Configuration.class:48
+msgid "Nfs Server enabled link pointer"
+msgstr ""
+
+#: FMain.form:33
+msgid "NFS Server Configuration"
+msgstr ""
+
+#: FMain.form:45
+msgid "Use this control to select and add a directory to be shared from this NFS server. A set of default Host access permissions as defined in the APP config are assigned for the most used  defaults and should be  adequate for most cases.\n\nDont forget to Check the local ACL(ACCESS CONTROL LIST) for the shared directories\n '*' defines all hosts."
+msgstr ""
+
+#: FMain.form:46
+msgid "Add Directory"
+msgstr ""
+
+#: FMain.form:51
+msgid "Edit"
+msgstr ""
+
+#: FMain.form:56
+msgid "Delete"
+msgstr ""
+
+#: FMain.form:68
+msgid "Unlike Windows shares NFS(Network File System) shares are mainly configured on a Per client computer. Access and restrictions are set via ACL on both the client and Server hosts. This control allows you to select which clients may acces the currently selected Shared directory. The ACL set on the shared directory manages what may be done by the connected host.\nACL = ACCESS CONTROL LIST\nSee this link for more information:\nhttps://www.geeksforgeeks.org/access-control-listsacl-linux/\n\n\n "
+msgstr ""
+
+#: FMain.form:69
+msgid "Add Host"
+msgstr ""
+
+#: FMain.form:84
+msgid "Enable NFSv4"
+msgstr ""
+
+#: FMain.form:90
+msgid "domain"
+msgstr ""
+
+#: FMain.form:95
+msgid "This will Save the EXPORTS config and commit the changes to NFS SERVER by restarting the NFS SERVER"
+msgstr ""
+
+#: FMain.form:96
+msgid "Save/Commit"
+msgstr ""
+
+#: FMain.form:101
+msgid "UnDelete"
+msgstr ""
+
+#: FMain.form:106 RestoreBackup.form:21
+msgid "Quit"
+msgstr ""
+
+#: FMain.form:111
+msgid "This Will allow the restoration of older copies of the EXPORTS file"
+msgstr ""
+
+#: FMain.form:112
+msgid "Restore From Backups"
+msgstr ""
+
+#: FMain.form:117
+msgid "This allows you to configure the this application default values and functions."
+msgstr ""
+
+#: FMain.form:118
+msgid "App Config"
+msgstr ""
+
+#: FMain.form:123
+msgid "When Scan for active hosts is selected, the system with look for active client computers for the NFS share to allow the user to select a host for directories."
+msgstr ""
+
+#: FMain.form:124
+msgid "Scan For Active Hosts"
+msgstr ""
+
+#: FMain.form:133
+msgid "Server"
+msgstr ""
+
+#: FMain.form:138
+msgid "This button will stop the NFS service and close all shares. Any host access thos shares will loose connection and possibly data. It would be best to check the status and see who is connect to the shares before stopping the service."
+msgstr ""
+
+#: FMain.form:139
+msgid "Stop"
+msgstr ""
+
+#: FMain.form:144
+msgid "The control will start the service if it is stopped. It will stop and restart the service if it is already running. It is best to check the status to see the  connected clients before using this control if the serice is cuurently up and running. "
+msgstr ""
+
+#: FMain.form:145
+msgid "Restart"
+msgstr ""
+
+#: FMain.form:150
+msgid "This control displays the status of the NFS service and the list of connected clients, curently shared directories and the configured shered directories."
+msgstr ""
+
+#: FMain.form:151
+msgid "Status"
+msgstr ""
+
+#: FMain.form:157
+msgid "This control displays the Status of the Running Service. It can also be used to start a stopped NFS service."
+msgstr ""
+
+#: FMain.form:158
+msgid "Running"
+msgstr ""
+
+#: FMain.form:164
+msgid "This control displays the status of a stopped NFS service and also may be used to stop a running NFS service."
+msgstr ""
+
+#: FMain.form:165
+msgid "Stopped"
+msgstr ""
+
+#: FMain.form:185
+msgid "When the NFS service is enabled it will start at system boot and make shares available on the network. If this is not enabled then you may start and stop the service only manually."
+msgstr ""
+
+#: FMain.form:186
+msgid "Enable NFS Service"
+msgstr ""
+
+#: GetDataForm.form:37 GetPassword.form:27 SaveProgress.form:17
+msgid "OK"
+msgstr ""
+
+#: GetHost.form:8
+msgid "Please Wait Searching for Local Hosts"
+msgstr ""
+
+#: GetHost.form:14
+msgid "Searching for local hosts that are online"
+msgstr ""
+
+#: GetPassword.form:12
+msgid "Enter sudo password (Required to save changes)"
+msgstr ""
+
+#: GetPassword.form:17
+msgid "Password :"
+msgstr ""
+
+#: GetPassword.form:35
+msgid "Authentication Required"
+msgstr ""
+
+#: RestoreBackup.form:10
+msgid "NFS_SERVER CONFIG RESTORE"
+msgstr ""
+
+#: RestoreBackup.form:26
+msgid "Restore/Commit"
+msgstr ""
+
+#: RestoreBackup.class:15
+msgid "NFS-SERVER CONFIG Preview ("
+msgstr ""
+
+#: RestorePreview.form:12
+msgid "Displays the Restored file contents for review"
+msgstr ""
+
+#: SaveProgress.form:9
+msgid "Saving new Exports file Info"
+msgstr ""
+
+#: SelectDirectory.form:17
+msgid "ok"
+msgstr ""
+
+#: main.module:99
+msgid "Begin superuser call loading"
+msgstr ""
+
+#: main.module:121
+msgid "Saving Exports and creating backup"
+msgstr ""
+
+#: main.module:126
+msgid "We are running as root! Writing NFS "
+msgstr ""
+
+#: main.module:130
+msgid "Created backup directory "
+msgstr ""
+
+#: main.module:134
+msgid "Copying file from "
+msgstr ""
+
+#: main.module:137
+msgid "Copied file from "
+msgstr ""
+
+#: main.module:141
+msgid "Removed stale "
+msgstr ""
+
+#: main.module:145
+msgid "Moved "
+msgstr ""
+
+#: main.module:152
+msgid "Copies "
+msgstr ""
+
+#: main.module:155
+msgid "Removed Temp file "
+msgstr ""
+
+#: main.module:158
+msgid "Restarted NFS-SERVER result ("
+msgstr ""
+
+#: main.module:161
+msgid "Restarted NFS-SERVER Status\n"
+msgstr ""
+
+#: main.module:162
+msgid "Restore Complete ! Press OK to continue\n"
+msgstr ""
+
+#: main.module:167
+msgid "ooops something went very wrong! -->"
+msgstr ""
+
+#: main.module:178
+msgid "Restoring Exports from backups"
+msgstr ""
+
+#: main.module:183
+msgid "We are running as root! Restoring NFS "
+msgstr ""
+
+#: main.module:186
+msgid "The requested file was not found to restore\n"
+msgstr ""
+
+#: main.module:191
+msgid "Deleted the old "
+msgstr ""
+

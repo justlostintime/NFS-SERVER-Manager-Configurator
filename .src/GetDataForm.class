@@ -1,0 +1,48 @@
+' Gambas class file
+
+Static TheValue As String
+
+
+Public Sub btnOK_Click()
+
+  'AddHost.gReturnInfo = DataInput.text
+  Me.Close(True)
+
+End
+
+Public Sub Value() As String
+  
+  Return TheValue
+  
+End
+
+
+Public Sub btnCancel_Click()
+
+  DataInput.text = ""
+  Me.Close(False)
+
+End
+
+
+Public Sub Form_Close()
+
+  TheValue = DataInput.text
+  Me.Close(False)
+  
+  Settings["Window/GetDataForm/Top"] = Me.Top
+  Settings["Window/GetDataForm/Left"] = Me.Left
+  Settings["Window/GetDataForm/Height"] = Me.Height
+  Settings["Window/GetDataForm/Width"] = Me.Width
+
+End
+
+Public Sub Form_Open()
+
+  Me.Top = Settings["Window/GetDataForm/Top", Me.Top]
+  Me.Left = Settings["Window/GetDataForm/Left", Me.Left]
+  Me.Height = Settings["Window/GetDataForm/Height", Me.Height]
+  Me.Width = Settings["Window/GetDataForm/Width", Me.Width]
+  
+
+End

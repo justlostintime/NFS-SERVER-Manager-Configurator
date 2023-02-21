@@ -1,0 +1,35 @@
+' Gambas class file
+
+
+Public Sub Button1_Click()
+
+  Me.close
+
+End
+
+Public Sub Form_Resize()
+
+  SaveMsg.width = Me.width - 10
+  SaveMsg.height = Me.height - Button1.Height - 20
+  Button1.x = Me.width - Button1.width - 10
+  Button1.y = Me.height - Button1.height - 10
+
+End
+
+Public Sub Form_Open()
+      Me.Top = Settings["Window/SaveProgress/Top", Me.Top]
+      Me.Left = Settings["Window/SaveProgress/Left", Me.Left]
+      Me.Height = Settings["Window/SaveProgress/Height", Me.Height]
+      Me.Width = Settings["Window/SaveProgress/Width", Me.Width]
+  
+
+End
+
+Public Sub Form_Close()
+
+  Settings["Window/SaveProgress/Top"] = Me.Top
+  Settings["Window/SaveProgress/Left"] = Me.Left
+  Settings["Window/SaveProgress/Height"] = Me.Height
+  Settings["Window/SaveProgress/Width"] = Me.Width
+
+End

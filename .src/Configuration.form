@@ -1,0 +1,18 @@
+# Gambas Form File 3.0
+
+{ Form Form
+  MoveScaled(0,0,87,60)
+  Text = ("NFS-SERVER APPLICATION CONFIGURATOR")
+  { SaveButton Button
+    MoveScaled(54,56,16,3)
+    Text = ("Save")
+  }
+  { CloseButton Button
+    MoveScaled(73,56,12,3)
+    Text = ("Close")
+  }
+  { ParmList TableView
+    MoveScaled(2,2,83,53)
+    Expand = True
+  }
+}

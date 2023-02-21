@@ -1,0 +1,504 @@
+' Gambas class file
+
+Public NfsDirectories As Collection = New Collection
+Public NfsDeletedStuff As Collection = New Collection
+Public NfsDeletedOrder As String[] = New String[]
+
+Static colorShowing As Boolean = True
+
+Public Sub LoadFromExport()
+
+  Dim NFSLIST As File
+  Dim nfsEntry As String
+
+  If Not Exist(main.NfsExportFile) Then
+    Message.Info("The file for exports " & main.NfsExportFile & " not found")
+    Return
+  Endif
+
+  Try NFSLIST = Open main.NfsExportFile For Read
+
+  While Not Eof(NFSLIST)
+    Line Input #NFSLIST, nfsEntry
+    nfsEntry = Trim(nfsEntry)
+    If nfsEntry[0] = "#" Then Continue
+    DoParse(nfsEntry)
+  Wend
+
+Catch
+  Message.Error("Error while parsing Exports " & Error.text & " at " & Error.where)
+  Close #NFSLIST
+
+End
+
+Public Sub DoParse(nfsEntry As String)
+
+  Dim nfsDirectory As String
+  Dim nfsHosts As Collection = New Collection
+  Dim nfsHost As String
+  Dim nfsHostParms As String
+  Dim mlist As String[]
+  Dim i As Integer
+
+  If nfsEntry = "" Then Return
+  mlist = Split(nfsEntry, " ()")
+
+  'Print mlist
+  If Not IsNull(mList) Then
+    nfsDirectory = mlist[0]
+
+    For i As Integer = 1 To mlist.Length - 1
+      If mlist[i] = "" Then Continue
+      nfshost = mlist[i]
+      i += 1
+      nfsHostParms = mlist[i]
+      nfsHosts.Add(nfsHostParms, nfshost)
+    Next
+    NfsDirectories.Add(nfsHosts, nfsDirectory)
+  Endif
+
+  Print "DoParse: Processing record "; i
+
+End
+
+Public Sub FillDirectoryTable(FocusTo As String)
+
+  Dim hosts As Collection
+  Dim nfsDir As String
+  Dim i, SavedSet As Integer = 0
+  Dim Sorter As String[] = New String[]
+
+  For Each hosts In NfsDirectories
+    Sorter.Add(NfsDirectories.Key)
+  Next
+
+  Sorter.Sort(gb.Ascent)
+
+  DirectoryView.Columns.Count = 1
+  DirectoryView.Rows.Count = NfsDirectories.length
+
+  For Each nfsDir In Sorter
+    DirectoryView[i, 0].text = nfsDir
+    If Not FocusTo = "" Then
+      If FocusTo = nfsDir Then
+        SavedSet = i
+      Endif
+    Endif
+    i += 1
+  Next
+  DirectoryView.SetFocus
+  DirectoryView.Select(SavedSet)
+
+End
+
+Public Sub ReloadData()
+
+  LoadFromExport()
+  FillDirectoryTable("")
+
+End
+
+
+Public Sub Form_Open()
+
+  Me.Top = Settings["Window/fmain/Top", Me.Top]
+  Me.Left = Settings["Window/fmain/Left", Me.Left]
+  Me.Height = Settings["Window/fmain/Height", Me.Height]
+  Me.Width = Settings["Window/fmain/Width", Me.Width]
+
+
+
+  main.LoadConfig()
+
+  LoadFromExport()
+  FillDirectoryTable("")
+  Timer1.enabled = True
+
+  Me.text = application.Title & "(" & Application.Version & ")" & main.NfsExportFile
+
+End
+
+
+Public Sub DirectoryView_Select()
+
+  Dim nfsHosts As Collection
+  Dim row, host As String
+  Dim i As Integer = 0
+
+  row = DirectoryView.current.text
+  nfshosts = NfsDirectories[row]
+
+  HostView.Columns.Count = 2
+  HostView.Rows.Count = nfsHosts.length
+  HostView.Columns[0].width = 150
+
+  For Each host In nfsHosts
+    HostView[i, 0].text = nfsHosts.key
+    HostView[i, 1].text = host
+    i += 1
+  Next
+
+  HostView.row = 0
+
+  HostView.Refresh()
+
+End
+
+Public Sub AddDirectory_Click()
+
+  Dim NfsDir As String
+  Dim NfsHost As Collection
+
+  NfsHost = New Collection
+
+  nfsHost.Add(main.NfsDefaultParms, "*")
+
+  If Dialog.SelectDirectory() Then Return
+  nfsDir = Dialog.Path
+
+  If NfsDirectories.Exist(nfsDir) Then
+    Message("Directory " & nfsDir & " Already is defined")
+  Else
+    If Not Exist(nfsDir) Then
+      Message.Error("The specified directory was not found!" & nfsDir)
+      Return
+    Endif
+    NfsDirectories.Add(NfsHost, nfsDir)
+  Endif
+
+  FillDirectoryTable(nfsDir)
+
+End
+
+Public Sub DeleteDirectory_Click()
+
+  Dim NfsDirectory As String
+
+  If DirectoryView.Current = Null Then Return
+
+  NfsDirectory = DirectoryView.Current.text
+  If Message.Question("Are Your Sure You Wish to delete : " & NfsDirectory, "Yes", "No") Then
+
+    NfsDeletedStuff.Add(NfsDirectories[nfsDirectory], nfsDirectory) ' save the old stuff just in case
+    NfsDeletedOrder.Push(nfsDirectory)
+
+    NfsDirectories.Remove(NfsDirectory)
+    DirectoryView.Select(0)
+    If DirectoryView.Rows.Max = 0 Then
+      DirectoryView.Clear
+    Else
+      FillDirectoryTable("")
+    Endif
+    DirectoryView.SetFocus
+  Endif
+
+End
+
+Public Sub EditDirectory_Click()
+
+  Dim NfsDirectory As String
+  Dim NfsHosts As Collection
+
+  If DirectoryView.Current = Null Then Return
+
+  NfsDirectory = DirectoryView.Current.text
+
+  If Dialog.SelectDirectory() Then Return
+
+  NfsHosts = NfsDirectories[NfsDirectory]
+  NfsDirectories.Remove(NfsDirectory)
+  NfsDirectories.Add(NfsHosts, Dialog.path)
+  FillDirectoryTable(Dialog.Path)
+
+End
+
+Public Sub Undelete_Click()
+
+  Dim NfsDirectory As String
+
+  If NfsDeletedOrder.count = 0 Then Return
+  NfsDirectory = NfsDeletedOrder.pop()
+  NfsDirectories.Add(NfsDeletedStuff[NfsDirectory], NfsDirectory)
+  FillDirectoryTable(NfsDirectory)
+
+End
+
+Public Sub RemoveHostFromTable(HostName As String)
+
+  Dim mHosts As Collection
+
+  mHosts = NfsDirectories[DirectoryView.Current.text]
+  mHosts.Remove(HostName)
+
+End
+
+
+Public Sub InsertHostToTable(HostName As String, HostParms As String)
+
+  Dim mHosts As Collection
+
+  mHosts = NfsDirectories[DirectoryView.Current.text]
+
+  If mHosts.Exist(HostName) Then
+
+    Message.Info("The Host you selected (" & HostName & ") Is already defined")
+
+  Else
+
+    mHosts.Add(HostParms, HostName)
+    NfsDirectories[DirectoryView.Current.text] = mHosts
+    FillDirectoryTable(DirectoryView.Current.text)
+    HostView.Refresh()
+    Wait
+  Endif
+
+End
+
+Public Sub AddHostButton_Click()
+
+  AddHost.SetHostParms("", "")
+  AddHost.ShowModal()
+  DirectoryView_Select()
+
+End
+
+Public Sub CommitButton_Click()
+
+  Dim tfile As File
+  Dim nFile As String = Temp$()
+  Dim Hosts As Collection
+  Dim Parms As String
+  Dim TheLine As String
+
+  tfile = Open nFile For Write Create
+
+  Print #tfile, "#Created on (" & Now() & ") By NFS-SERVER CONFIGURATOR using gambas 3\n"
+
+  For Each Hosts In NfsDirectories
+    TheLine = NfsDirectories.key & " "
+    For Each Parms In Hosts
+      TheLine &= Hosts.Key & "(" & Parms & ") "
+    Next
+    Print #tFile, TheLine
+    Print TheLine
+  Next
+
+  Close #tfile
+  main.SaveExports(nFile)
+
+End
+
+Public Sub RestoreButton_Click()
+
+  If Not RestoreBackup.Closed Then Return
+
+  RestoreBackup.RestoreList.dir = main.NfsExportBackups
+  RestoreBackup.Show()
+
+
+End
+
+
+Public Sub DirectoryView_DblClick()
+
+  EditDirectory_Click()
+
+End
+
+Public Sub ConfigureButton_Click()
+
+  Configuration.ShowModal()
+
+End
+
+Public Sub QuitButton_Click()
+
+  Form_Close()
+  Quit 0
+
+End
+
+Public Sub Form_Close()
+
+  Settings["Window/fmain/Top"] = Me.Top
+  Settings["Window/fmain/Left"] = Me.Left
+  Settings["Window/fmain/Height"] = Me.Height
+  Settings["Window/fmain/Width"] = Me.Width
+
+  main.SaveConfig()
+
+End
+
+Public Sub DoHostScans_Click()
+
+  main.NfsHostScan = DoHostScans.Value
+
+End
+
+Public Sub Timer1_Timer()
+
+  If colorShowing Then
+    colorShowing = False
+    TheLight.Background = Color.Green
+    TheLight.foreground = Color.Green
+  Else
+    colorShowing = True
+    TheLight.Background = Color.Red
+    TheLight.foreground = Color.Red
+  Endif
+
+  TheLight.Refresh
+  Wait
+
+  EnableServiceCheck.value = main.isSericeEnabled()
+  ServerRunning.value = main.isServerRunning()
+  ServerStopped.value = Not main.isServerRunning()
+  Panel1.Refresh()
+  Wait
+
+End
+
+Public Sub ServStop_Click()
+
+  Dim cmdresult As String
+
+  Shell main.NfsServerStop To cmdresult
+
+End
+
+Public Sub ServStatus_Click()
+
+  Dim cmdresult As String
+  Dim Hosts As Collection
+  Dim Parms As String
+  Dim TheLine, IPLocalList, eachline, localnet, localnet6 As String
+  Dim Listing, lineset As String[]
+
+  Shell main.NfsServerStatus To cmdresult
+  SaveProgress.title = " NFS Server Status Information "
+  SaveProgress.SaveMsg.text = cmdresult
+
+  SaveProgress.savemsg.text &= "\nCurrently exported\n\n"
+  Shell "showmount -e localhost" To TheLine
+  SaveProgress.savemsg.text &= TheLine & "\n"
+
+  SaveProgress.savemsg.text &= "\nCurrently configured\n\n"
+  For Each Hosts In NfsDirectories
+    TheLine = NfsDirectories.key & " "
+    For Each Parms In Hosts
+      TheLine &= Hosts.Key & "(" & Parms & ") "
+    Next
+    SaveProgress.savemsg.text &= TheLine & "\n"
+  Next
+
+  SaveProgress.savemsg.text &= "\nCurrently In Use by hosts\n\n"
+  Shell "showmount" To TheLine
+  SaveProgress.savemsg.text &= TheLine & "\n"
+
+  Shell "ip address" To IpLocalList
+  Listing = Split(IpLocalList, "\n\r")
+
+  SaveProgress.savemsg.text &= "\nOur Local Address shared on network\n"
+  For Each EachLine In Listing
+
+    If EachLine = "" Then Continue
+
+    LineSet = Split(Trim(EachLine), " \t")
+    Select Case LineSet[0]
+      Case "inet"
+        If AddHost.IsLocal(LineSet[1]) Then LocalNet = LineSet[1]
+        If localnet = "" Then Continue
+        SaveProgress.savemsg.text &= "Local IP4 " & Localnet & "\n"
+      Case "inet6"
+        LocalNet6 = LineSet[1]
+        SaveProgress.savemsg.text &= "Local IP6 " & Localnet6 & "\n"
+    End Select
+  Next
+
+  SaveProgress.savemsg.text &= "\nCurrently following hosts attached\n"
+  Shell "netstat -an | grep :2049" To cmdresult
+  SaveProgress.savemsg.text &= cmdresult
+  SaveProgress.savemsg.text &= "\nPress OK to continue\n"
+  SaveProgress.Show()
+
+  main.waitsaveclose()
+
+End
+
+Public Sub ServRestart_Click()
+
+  Dim cmdresult As String
+
+  Shell main.NfsServerRestart To cmdresult
+
+End
+
+Public Sub ServerRunning_Click()
+
+  Timer1.Enabled = False
+  ServRestart_Click()
+  Wait
+  Timer1.enabled = True
+  Wait
+
+End
+
+Public Sub ServerStopped_Click()
+
+  Timer1.Enabled = False
+  ServStop_Click()
+  Wait
+  Timer1.Enabled = True
+  Wait
+
+End
+
+Public Sub EnableServiceCheck_Click()
+
+  Dim parm As String
+
+  If EnableServiceCheck.value Then
+    If main.isSericeEnabled() Then Return
+    Shell main.NfsEnableCommand & "2>&1" To Parm
+  Else
+    If Not main.isSericeEnabled() Then Return
+    Shell main.NfsDisableCommand & "2>&1" To parm
+  Endif
+
+  EnableServiceCheck.value = main.isSericeEnabled()
+
+End
+
+Public Sub HostView_Click()
+
+  HostView.SetFocus()
+
+End
+
+Public Sub EditHost_Click()
+
+
+  AddHost.SetHostParms(HostView[HostView.row, 1].text, HostView[HostView.row, 0].text)
+  AddHost.ShowModal()
+
+  DirectoryView_Select()
+  Wait
+
+
+End
+
+Public Sub DeleteHost_Click()
+
+  Dim mHosts As Collection
+
+  mHosts = NfsDirectories[DirectoryView.Current.text]
+
+  If mHosts.Exist(HostView[HostView.row, 0].text) Then
+    mHosts.Remove(HostView[HostView.row, 0].text)
+    NfsDirectories[DirectoryView.Current.text] = mHosts
+    FillDirectoryTable(DirectoryView.Current.text)
+    HostView.Refresh()
+    Wait
+  Endif
+
+End

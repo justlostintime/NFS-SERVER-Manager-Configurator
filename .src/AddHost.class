@@ -1,0 +1,319 @@
+' Gambas class file
+
+Public gHostParms As String[]
+Public gFreeParms As String[] = New String[]
+Public gHostName As String
+Public gHelp As Collection
+Public gHelpParm As Collection
+Public gHelpItem As String
+Public gReturnInfo As String
+Public gEditMode As Boolean = False
+Public gOldHost As String
+
+Public Sub IsLocal(ipaddr As String) As Boolean
+  
+  Dim IpParts As String[]
+  
+  IpParts = Split(ipaddr, "./")
+  Select Case IpParts[0]
+     Case "192"
+           If IpParts[1] = "168" Then Return True
+     Case "172"
+          Select Case Int(IpParts[1])
+            Case 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31
+              Return True
+          End Select
+     Case "10"
+       Return True
+     Case "169"
+       If IpParts[1] = "254" Then Return True
+  End Select
+  
+  Return False
+  
+End
+
+Public Sub LoadHelper()
+  
+  Dim TheBlob, TheKey, TheParms As String
+  Dim Mhelp As String[]
+  Dim i As Integer
+  
+  If IsNull(gHelp) Then 
+    
+    gHelp = New Collection
+    gHelpParm = New Collection
+    
+    TheBlob = File.Load("MountList")
+    
+    Mhelp = Split(TheBlob, "!")
+    
+    For i = 0 To Mhelp.count - 1 Step 3
+      TheKey = regexp.Replace(Mhelp[i], "( |\t|\n)", "")
+ 
+      
+      If Not IsNull(TheKey) Then
+        
+        TheParms = regexp.Replace(Mhelp[i + 1], "( |\t|\n)", "")
+        gHelp.Add(Mhelp[i + 2], TheKey)
+        gHelpParm.Add(TheParms, TheKey)
+        
+        gFreeParms.Add(TheKey)
+        
+      Endif
+    Next
+    
+   'Print Mhelp
+   
+  Endif
+  
+End
+
+
+Public Sub SetHostParms(HostParmList As String, hostName As String)
+  
+  gHostParms = Split(RegExp.replace(HostParmList, "( |\t) ", ""), ",")
+  If Not hostname = "" Then 
+      gEditMode = True
+      gOldHost = HostName
+  Endif
+  
+  gHostName = hostName
+  
+End
+
+
+Public Sub populatePList()
+  Dim TheKey, item As String
+  Dim i As Integer
+  
+  SetParms.List = gHostParms
+  SelectParms.list = gFreeParms.Sort()
+  
+  For Each TheKey In gHostParms
+    
+    If IsNull(TheKey) Then 
+      Continue
+    Endif
+    
+    item = Split(TheKey, "=")[0]
+    
+    i = SelectParms.Find(Split(TheKey, "=")[0])
+    
+    If i >= 0 Then
+        SelectParms.Remove(i)
+    Else
+      Message.Info("The Parameter : " & item & " : Was not found!")
+    Endif
+    
+  Next
+  
+End
+
+
+Public Sub Form_Open()
+
+  Dim IpLocalList, EachLine, LocalNet, LocalNet6, DnsName As String = ""
+  Dim Listing, LineSet As String[]
+  Dim GetName As DnsClient = New DnsClient
+  
+  
+  Me.Top = Settings["Window/AddHost/Top", Me.Top]
+  Me.Left = Settings["Window/AddHost/Left", Me.Left]
+  Me.Height = Settings["Window/AddHost/Height", Me.Height]
+  Me.Width = Settings["Window/AddHost/Width", Me.Width]
+  
+  
+  
+  If Not gHostName = "" Then
+    HostPrompt.Add(gHostName)
+  Else
+    gHostParms = Split(Main.NfsDefaultParms, ",")
+  Endif
+  
+  LoadHelper()
+  populatePList()
+   
+  HostPrompt.enabled = False
+  
+  Shell "ip address" To IpLocalList
+  Listing = Split(IpLocalList, "\n\r")
+  
+  For Each EachLine In Listing
+    
+    If EachLine = "" Then Continue
+    
+    LineSet = Split(Trim(EachLine), " \t", "", True)
+    Select Case LineSet[0]
+      Case "inet"
+             If Not LocalNet = "" Then Continue
+             HostPrompt.Add(LineSet[1])
+             If IsLocal(LineSet[1]) Then LocalNet = LineSet[1]
+      Case "inet6"
+             HostPrompt.Add(LineSet[1])
+             LocalNet6 = LineSet[1]
+    End Select
+  Next
+   
+   If Not LocalNet = "" Then
+   If main.NfsHostScan Then
+    GetHost.Show
+    Wait 1
+    FMain.Timer1.enabled = False
+    Wait
+    GetHost.ClearMessage()
+    GetHost.PostMessage(("Looking for active hosts network(") & LocalNet & (")\n Please be patient\n"))
+    
+    If Exist(main.NfsHostSearchCommand) Then 
+        Shell main.NfsHostSearchCommand & " " & main.NfsHostSearchParms & " " & LocalNet To IpLocalList
+        GetHost.PostMessage(("Attempting to resolve IP address to Host Name\n Host name are better to use as \nthey support dhcp Addresses for devices\n"))
+        Listing = Split(IpLocalList, "\n")
+        Wait
+        For Each EachLine In Listing
+          GetName.HostIP = EachLine
+          GetName.Async = False
+          GetName.GetHostName()
+          DnsName = GetName.HostName
+          If Not IsNull(DnsName) Then EachLine = DnsName & "(" & EachLine & ")"
+          If Not IsNull(EachLine) Then HostPrompt.Add(EachLine)
+          Wait
+        Next
+    Else
+      GetHost.PostMessage(("This app requires the ") & main.NfsHostSearchCommand & (" command to be installed\n in order to identify active hosts.\n Please install it for this functionality to work\n Bypassed for now"))
+    Endif
+    
+    GetHost.PostMessage(("Done!"))
+    Wait 3
+    GetHost.close
+    Wait
+   Endif
+  Endif
+  
+  If Not gHostName = "" Then
+    HostPrompt.text = gHostName
+  Endif
+  
+ 
+  
+  HostPrompt.enabled = True
+  FMain.Timer1.enabled = True
+  
+  'Print IpLocalList
+End
+
+Public Sub Button3_Click()
+
+   Message.Info(gHelp[gHelpItem])
+
+End
+
+Public Sub SetParms_Click()
+
+  gHelpItem = Split(SetParms.Current.text, "=")[0]
+  Button3.text = "Help For " & gHelpItem
+  Wait
+End
+
+Public Sub SelectParms_Click()
+
+  gHelpItem = SelectParms.Current.text
+  Button3.text = "Help For " & gHelpItem
+  Wait
+
+End
+
+Public Sub AddParm_Click()
+
+ Dim GetParm As String
+ 
+ GetParm = SelectParms.Current.text
+ 
+ 
+ If Not gHelpParm[GetParm] = "" Then
+   
+   GetDataForm.DataMessage.text = GetParm & gHelpParm[GetParm]
+   GetDataForm.text = ("Parameter data needed for ") & GetParm 
+   
+   If GetDataForm.ShowModal() Then
+     
+     If GetDataForm.Value = "" Then
+       GetParm = GetParm
+     Else
+      GetParm &= "=" & GetDataForm.Value
+     Endif
+     
+   Else
+     
+     Return
+     
+   Endif
+   
+ Endif
+ 
+ gHostParms.Add(GetParm)
+ populatePList()
+
+End
+
+Public Sub RemoveParm_Click()
+  Dim TheKey As String
+  Dim i As Integer
+  TheKey = SetParms.Current.text
+  
+  SetParms.Remove(SetParms.index)
+  i = gHostParms.Find(TheKey)
+  If i >= 0 Then
+      gHostParms.Remove(i)
+      populatePList()
+  Endif
+  
+End
+
+Public Sub CancelButton_Click()
+
+  gHostName = ""
+  AddHost.close()
+
+End
+
+Public Sub SaveButton_Click()
+
+  Dim HostParms, parm As String = ""
+  
+  gHostName = Split(HostPrompt.text, "()")[0]
+  
+  For Each parm In gHostParms
+    If HostParms = "" Then
+       HostParms &= parm
+    Else
+       HostParms &= "," & parm
+    Endif
+    
+  Next
+  
+  If gEditMode Then
+    
+    FMain.RemoveHostFromTable(gOldHost)
+    
+  Endif
+  
+  FMain.InsertHostToTable(gHostName, HostParms)
+  
+  Me.Close()
+  
+End
+
+Public Sub HostPrompt_Click()
+
+  gHostName = HostPrompt.text 
+  Print gHostName
+End
+
+Public Sub Form_Close()
+
+  Settings["Window/AddHost/Top"] = Me.Top
+  Settings["Window/AddHost/Left"] = Me.Left
+  Settings["Window/AddHost/Height"] = Me.Height
+  Settings["Window/AddHost/Width"] = Me.Width
+
+End
