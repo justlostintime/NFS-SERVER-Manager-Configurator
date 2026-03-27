@@ -115,7 +115,7 @@ End
 Public Sub Form_Open()
 
   Dim IpLocalList, EachLine, LocalNet, LocalNet6, DnsName As String = ""
-  Dim Listing, LineSet As String[]
+  Dim Listing, LineSet, Fields As String[]
   Dim GetName As DnsClient = New DnsClient
 
 
@@ -123,8 +123,6 @@ Public Sub Form_Open()
   Me.Left = Settings["Window/AddHost/Left", Me.Left]
   Me.Height = Settings["Window/AddHost/Height", Me.Height]
   Me.Width = Settings["Window/AddHost/Width", Me.Width]
-
-
 
   If Not gHostName = "" Then
     HostPrompt.Add(gHostName)
@@ -158,16 +156,19 @@ Public Sub Form_Open()
 
   If Not LocalNet = "" Then
     If main.NfsHostScan Then
-      GetHost.Show
+      GetHost.Show()
       Wait 1
       FMain.Timer1.enabled = False
       Wait
-      GetHost.ClearMessage()
-      GetHost.PostMessage(("Looking for active hosts network(") & LocalNet & (")\n Please be patient\n"))
+      GetHost.WaitingMessage.Clear()
+      GetHost.WaitingMessage.text = "Looking for active hosts network(" & LocalNet & ")\n Please be patient\n"
+      GetHost.PostMessage(main.NfsHostSearchCommand & " " & main.NfsHostSearchParms & " " & LocalNet & "\n")
+      GetHost.Refresh()
+      Wait 0.1
 
       If Exist(main.NfsHostSearchCommand) Then
         Shell main.NfsHostSearchCommand & " " & main.NfsHostSearchParms & " " & LocalNet To IpLocalList
-        GetHost.PostMessage(("Attempting to resolve IP address to Host Name\n Host name are better to use as \nthey support dhcp Addresses for devices\n"))
+        GetHost.PostMessage(("Attempting to resolve IP address to Host Name\n Host names are better to use as \nthey support dhcp Addresses for devices\n"))
         Listing = Split(IpLocalList, "\n")
         Wait
         For Each EachLine In Listing
@@ -179,6 +180,25 @@ Public Sub Form_Open()
           If Not IsNull(EachLine) Then HostPrompt.Add(EachLine)
           Wait
         Next
+
+        If System.Exist("tailscale") Then
+          GetHost.PostMessage("Checking for Tailscale devices\n")
+          Wait 0.1
+
+          Shell "tailscale status" To IpLocalList
+
+          listing = Split(IpLocalList, "\n")
+          GetHost.PostMessage(IpLocalList & "\n")
+          Wait 0.1
+          For Each EachLine In listing
+            If Eachline = "" Or If EachLine[0] = "#" Then Continue
+            fields = Split(EachLine, " ", "", True, True)
+            If fields.count > 2 Then
+              HostPrompt.Add(fields[0] & "(" & fields[1] & ")")
+            Endif
+          Next
+        Endif
+
       Else
         GetHost.PostMessage(("This app requires the ") & main.NfsHostSearchCommand & (" command to be installed\n in order to identify active hosts.\n Please install it for this functionality to work\n Bypassed for now"))
       Endif

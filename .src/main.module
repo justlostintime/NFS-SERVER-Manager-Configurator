@@ -1,7 +1,7 @@
 ' Gambas module file
 
 Public NfsDefaultParms As String = "rw,all_squash,sync,no_subtree_check"
-Public NfsExportFile As String = "/etc/exports.test"
+Public NfsExportFile As String = "/etc/exports"
 Public NfsServerRestart As String = "systemctl restart nfs-server"
 Public NfsServerStatus As String = "systemctl status nfs-server"
 Public NfsServerStop As String = "systemctl stop nfs-server"
@@ -17,7 +17,7 @@ Public NfsHostScan As Boolean = False
 Public Sub LoadConfig()
 
   NfsDefaultParms = Settings["NfsDefaultParms", "rw,all_squash,sync,no_subtree_check"]
-  NfsExportFile = Settings["NfsExportFile", "/etc/exports.test"]
+  NfsExportFile = Settings["NfsExportFile", "/etc/exports"]
   NfsServerRestart = Settings["NfsServerRestart", "systemctl restart nfs-server"]
   NfsServerStatus = Settings["NfsServerStatus", "systemctl status nfs-server"]
   NfsServerStop = Settings["NfsServerStop", "systemctl stop nfs-server"]

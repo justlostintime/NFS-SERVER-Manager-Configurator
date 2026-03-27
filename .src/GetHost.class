@@ -3,13 +3,17 @@
 Public Sub PostMessage(msg As String)
 
   WaitingMessage.text = WaitingMessage.Text & msg
+  WaitingMessage.Refresh()
+  Wait 0.1
 
 End
 
 
 Public Sub ClearMessage()
 
-  WaitingMessage.text = ""
+  WaitingMessage.Clear()
+  WaitingMessage.Refresh()
+  Wait 0.1
 
 End
 
@@ -41,3 +45,4 @@ Public Sub Form_Resize()
   Wait
 
 End
+
